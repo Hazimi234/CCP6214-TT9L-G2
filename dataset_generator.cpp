@@ -25,9 +25,10 @@
 
 using namespace std;
 
-int main() {
+int main()
+{
     // 1. Initialize Random Engine with leader Student ID seed
-    mt19937_64 rng(2421324461U); 
+    mt19937_64 rng(2421324461U);
 
     // 2. Define ranges for the 10-digit integer and 5 lowercase letters
     uniform_int_distribution<long long> intDist(1000000000LL, 9999999999LL);
@@ -35,7 +36,8 @@ int main() {
 
     long long n;
     cout << "Enter the desired dataset size (e.g., 1000000): ";
-    if (!(cin >> n) || n <= 0) {
+    if (!(cin >> n) || n <= 0)
+    {
         cout << "Invalid input. Please enter a positive number." << endl;
         return 1;
     }
@@ -44,7 +46,8 @@ int main() {
     string filename = "dataset_" + to_string(n) + ".csv";
     ofstream outFile(filename);
 
-    if (!outFile.is_open()) {
+    if (!outFile.is_open())
+    {
         cout << "Error: Could not create the file " << filename << "\n";
         return 1;
     }
@@ -54,20 +57,23 @@ int main() {
     generatedInts.reserve(n); // Pre-allocate memory for better performance
 
     long long count = 0;
-    
+
     cout << "Generating " << n << " unique records. Please wait...\n";
     auto start_time = chrono::high_resolution_clock::now();
 
-    while (count < n) {
+    while (count < n)
+    {
         long long randomInt = intDist(rng);
 
         // Check if the integer is truly unique before writing
-        if (generatedInts.find(randomInt) == generatedInts.end()) {
+        if (generatedInts.find(randomInt) == generatedInts.end())
+        {
             generatedInts.insert(randomInt); // Add to tracking set
 
             // Generate the random 5-letter lowercase string
             string randomStr = "";
-            for (int i = 0; i < 5; ++i) {
+            for (int i = 0; i < 5; ++i)
+            {
                 randomStr += (char)charDist(rng);
             }
 
@@ -82,6 +88,6 @@ int main() {
     chrono::duration<double> duration = end_time - start_time;
 
     cout << "Success! Generated " << filename << " in " << duration.count() << " seconds.\n";
-    
+
     return 0;
 }
