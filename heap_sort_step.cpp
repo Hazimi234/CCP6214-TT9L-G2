@@ -1,5 +1,5 @@
 // *********************************************************
-// Program: radix_sort_step.cpp
+// Program: heap_sort_step.cpp
 // Course: CCP6214 Algorithm Design and Analysis
 // Lecture Class: TC3L
 // Tutorial Class: TT9L
@@ -24,7 +24,6 @@
 
 using namespace std;
 
-// Structure to hold the two fields of each record
 struct Record
 {
     long long id;
@@ -50,37 +49,28 @@ void printArray(const vector<Record> &arr, string label, ofstream &outFile)
     outFile << "] " << label << "\n";
 }
 
-// Counting Sort subroutine specifically for base 10 digits
-void countingSort(vector<Record> &arr, long long exp)
+// To heapify a subtree rooted with node i, which is an index in arr[].
+// n is the size of the heap.
+void heapify(vector<Record> &arr, int n, int i)
 {
-    int n = arr.size();
-    vector<Record> output(n);
-    int count[10] = {0};
+    int largest = i;       // Initialize largest as root
+    int left = 2 * i + 1;  // left child = 2*i + 1
+    int right = 2 * i + 2; // right child = 2*i + 2
 
-    // Store count of occurrences in count[] array
-    for (int i = 0; i < n; i++)
-    {
-        count[(arr[i].id / exp) % 10]++;
-    }
+    // If left child is larger than root
+    if (left < n && arr[left].id > arr[largest].id)
+        largest = left;
 
-    // Change count[i] so that count[i] now contains actual
-    // position of this digit in output[]
-    for (int i = 1; i < 10; i++)
-    {
-        count[i] += count[i - 1];
-    }
+    // If right child is larger than largest so far
+    if (right < n && arr[right].id > arr[largest].id)
+        largest = right;
 
-    // Build the output array (working backwards for stability)
-    for (int i = n - 1; i >= 0; i--)
+    // If largest is not root
+    if (largest != i)
     {
-        output[count[(arr[i].id / exp) % 10] - 1] = arr[i];
-        count[(arr[i].id / exp) % 10]--;
-    }
-
-    // Copy the output array to arr[]
-    for (int i = 0; i < n; i++)
-    {
-        arr[i] = output[i];
+        swap(arr[i], arr[largest]);
+        // Recursively heapify the affected sub-tree
+        heapify(arr, n, largest);
     }
 }
 
@@ -103,7 +93,7 @@ int main()
     string line;
     int currentRow = 1;
 
-    // Parse the CSV to extract exactly the rows we want
+    // Parse the CSV
     while (getline(inFile, line))
     {
         if (currentRow >= startRow && currentRow <= endRow)
@@ -120,26 +110,35 @@ int main()
     }
     inFile.close();
 
-    // Setup output file
     string outFilename = inputFilename.substr(0, inputFilename.find(".csv")) +
-                         "_radix_sorted_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
+                         "_heap_sorted_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
     ofstream outFile(outFilename);
 
-    // Redirect standard output to both screen and file for convenience
-    cout << "(processing from the rightmost character)\n";
-    outFile << "(processing from the rightmost character)\n";
+    cout << "(using maxheap)\n";
+    outFile << "(using maxheap)\n\n";
 
-    // Initial print (UPDATED)
-    printArray(arr, "original", outFile);
+    int n = arr.size();
 
-    // Process from rightmost digit (d=10) to leftmost digit (d=1)
-    long long exp = 1;
-    for (int d = 10; d >= 1; d--)
+    // Phase 1: Build heap (rearrange array into a Max Heap)
+    for (int i = n / 2 - 1; i >= 0; i--)
     {
-        countingSort(arr, exp);
-        // Step print (UPDATED)
-        printArray(arr, "$d=" + to_string(d) + "$", outFile);
-        exp *= 10;
+        heapify(arr, n, i);
+    }
+
+    // Print the initial built Max Heap
+    printArray(arr, "initial", outFile);
+
+    // Phase 2: One by one extract an element from the heap
+    for (int i = n - 1; i > 0; i--)
+    {
+        // Move current root (the biggest number) to the end
+        swap(arr[0], arr[i]);
+
+        // Call max heapify on the reduced heap
+        heapify(arr, i, 0);
+
+        // Print step tracking countdown (i=6, i=5, ... i=1)
+        printArray(arr, "$i=" + to_string(i) + "$", outFile);
     }
 
     cout << "\nStep tracker saved to: " << outFilename << "\n";
