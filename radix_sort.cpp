@@ -111,7 +111,6 @@ int main() {
     cout << "Running time: " << duration.count() << " seconds\n";
     cout << "Output saved to: " << outFilename << "\n";
     cout << "----------------------------------------\n";
-    cout << "Make sure to take a screenshot of this command prompt window!\n";
 
     return 0;
 }

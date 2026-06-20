@@ -187,7 +187,6 @@ int main()
     cout << "Worst case time: " << worstTime << " seconds\n";
     cout << "Output saved to: " << outFilename << "\n";
     cout << "----------------------------------------\n";
-    cout << "Take a screenshot of this command prompt window!\n";
 
     return 0;
 }
