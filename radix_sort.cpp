@@ -36,16 +36,20 @@ void countingSort(vector<Record>& arr, long long exp) {
     int count[10] = {0};
 
     for (int i = 0; i < n; i++) {
+        // isolate 0-9 digit
         count[(arr[i].id / exp) % 10]++;
     }
     for (int i = 1; i < 10; i++) {
+        // cumulative count to determine position in output
         count[i] += count[i - 1];
     }
     for (int i = n - 1; i >= 0; i--) {
+        // place the record in the correct position in output
         output[count[(arr[i].id / exp) % 10] - 1] = arr[i];
         count[(arr[i].id / exp) % 10]--;
     }
     for (int i = 0; i < n; i++) {
+        // copy back to arr
         arr[i] = output[i];
     }
 }
