@@ -20,14 +20,15 @@
 #include <fstream>
 #include <string>
 #include <random>
-#include <unordered_set>
+#include <vector>
 #include <chrono>
 
 using namespace std;
 
-int main() {
-    // 1. Initialize Random Engine with leader Student ID seed
-    mt19937_64 rng(2421324461U); 
+int main()
+{
+    // 1. Initialize Random Engine with your specific Student ID seed
+    mt19937_64 rng(2421324461U);
 
     // 2. Define ranges for the 10-digit integer and 5 lowercase letters
     uniform_int_distribution<long long> intDist(1000000000LL, 9999999999LL);
@@ -35,39 +36,49 @@ int main() {
 
     long long n;
     cout << "Enter the desired dataset size (e.g., 1000000): ";
-    if (!(cin >> n) || n <= 0) {
+    if (!(cin >> n) || n <= 0)
+    {
         cout << "Invalid input. Please enter a positive number." << endl;
         return 1;
     }
 
-    // 3. Create the output file based on user input size
     string filename = "dataset_" + to_string(n) + ".csv";
     ofstream outFile(filename);
 
-    if (!outFile.is_open()) {
+    if (!outFile.is_open())
+    {
         cout << "Error: Could not create the file " << filename << "\n";
         return 1;
     }
 
-    // 4. Track generated integers to ensure 100% uniqueness
-    unordered_set<long long> generatedInts;
-    generatedInts.reserve(n); // Pre-allocate memory for better performance
+    // SENIOR DEV OPTIMIZATION:
+    // Instead of an unordered_set which takes ~24 bytes per entry and will crash your RAM,
+    // we use a vector<bool> (Bit Array) that maps every single possible 10-digit number to a single bit.
+    // 9,000,000,000 bits = exactly 1.125 GB of RAM used, perfectly safe for your 16GB laptop!
+    cout << "Allocating memory for uniqueness tracking" << endl;
+    vector<bool> usedIDs(9000000000ULL, false);
 
     long long count = 0;
-    
+
     cout << "Generating " << n << " unique records. Please wait...\n";
     auto start_time = chrono::high_resolution_clock::now();
 
-    while (count < n) {
+    while (count < n)
+    {
         long long randomInt = intDist(rng);
 
-        // Check if the integer is truly unique before writing
-        if (generatedInts.find(randomInt) == generatedInts.end()) {
-            generatedInts.insert(randomInt); // Add to tracking set
+        // Map the 10-digit number (1 billion to 9.99 billion) to an index (0 to 8.99 billion)
+        long long index = randomInt - 1000000000LL;
+
+        // Check if the bit is false (meaning the integer is truly unique)
+        if (!usedIDs[index])
+        {
+            usedIDs[index] = true; // Flip the bit to true so we never use it again
 
             // Generate the random 5-letter lowercase string
             string randomStr = "";
-            for (int i = 0; i < 5; ++i) {
+            for (int i = 0; i < 5; ++i)
+            {
                 randomStr += (char)charDist(rng);
             }
 
@@ -82,6 +93,6 @@ int main() {
     chrono::duration<double> duration = end_time - start_time;
 
     cout << "Success! Generated " << filename << " in " << duration.count() << " seconds.\n";
-    
+
     return 0;
 }

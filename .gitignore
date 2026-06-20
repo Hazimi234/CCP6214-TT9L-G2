@@ -1,0 +1,17 @@
+# Ignore all generated CSV datasets
+*.csv
+
+# Ignore all text output files from the step trackers
+*.txt
+
+# Ignore compiled executable files (Windows)
+*.exe
+
+# Ignore compiled executable files (Mac/Linux)
+radix
+radix_step
+heap
+heap_step
+hash_bench
+hash_step
+generator
