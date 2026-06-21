@@ -199,7 +199,6 @@ int main()
     // We print the counts here so the compiler CANNOT delete the search loops
     cout << "[Verification] Best found: " << foundBest << " | Avg found: " << foundAvg << " | Worst found: " << foundWorst << "\n";
     cout << "----------------------------------------\n";
-    cout << "Take a screenshot of this command prompt window!\n";
 
     return 0;
 }
