@@ -51,10 +51,6 @@ int main()
         return 1;
     }
 
-    // SENIOR DEV OPTIMIZATION:
-    // Instead of an unordered_set which takes ~24 bytes per entry and will crash your RAM,
-    // we use a vector<bool> (Bit Array) that maps every single possible 10-digit number to a single bit.
-    // 9,000,000,000 bits = exactly 1.125 GB of RAM used, perfectly safe for your 16GB laptop!
     cout << "Allocating memory for uniqueness tracking" << endl;
     vector<bool> usedIDs(9000000000ULL, false);
 

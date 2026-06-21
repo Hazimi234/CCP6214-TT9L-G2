@@ -34,7 +34,7 @@ struct HashNode
 
 class HashTable
 {
-public: // Made public purely for the benchmark to find the worst-case cluster
+public:
     HashNode *table;
     int capacity;
 
@@ -74,7 +74,6 @@ public: // Made public purely for the benchmark to find the worst-case cluster
         return false;
     }
 
-    // Helper to find a key that will trigger the absolute worst-case probing sequence
     long long generateWorstCaseKey()
     {
         int maxLen = 0, bestStart = 0;
@@ -95,11 +94,13 @@ public: // Made public purely for the benchmark to find the worst-case cluster
                 }
             }
         }
-        // Generate a non-existent 10-digit key that hashes to 'bestStart'
-        long long fakeKey = bestStart;
-        while (fakeKey < 1000000000LL)
-            fakeKey += capacity;
-        fakeKey += (capacity * 5LL); // Ensure it's not in the dataset
+
+        // SENIOR DEV FIX: Make the fake key 12 digits long!
+        // Because the dataset only contains 10-digit IDs, a 12-digit ID is 100% guaranteed not to exist.
+        // We multiply the capacity until it reaches over 100,000,000,000 (12 digits) and add the target index.
+        long long multiplier = 100000000000LL / capacity + 1;
+        long long fakeKey = bestStart + (multiplier * capacity);
+
         return fakeKey;
     }
 };
@@ -136,23 +137,27 @@ int main()
     if (N == 0)
         return 1;
 
-    // Build the Hash Table
     cout << "Building Hash Table...\n";
     HashTable ht(N);
     for (long long key : keys)
     {
-        ht.insert(key, "dummy"); // We only need the ID for search timing
+        ht.insert(key, "dummy");
     }
 
-    // --- SETUP TEST CASES ---
-    long long bestCaseKey = keys[0];                    // First item inserted usually has 0 collisions
-    long long worstCaseKey = ht.generateWorstCaseKey(); // Forces massive probing
+    long long bestCaseKey = keys[0];
+    long long worstCaseKey = ht.generateWorstCaseKey();
+
+    // Variables to trick the compiler into doing the work
+    long long foundBest = 0, foundAvg = 0, foundWorst = 0;
 
     // --- 1. BEST CASE ---
     cout << "Running Best Case tests...\n";
     auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < N; i++)
-        ht.search(bestCaseKey);
+    {
+        if (ht.search(bestCaseKey))
+            foundBest++;
+    }
     auto end = chrono::high_resolution_clock::now();
     double bestTime = chrono::duration<double>(end - start).count();
 
@@ -160,7 +165,10 @@ int main()
     cout << "Running Average Case tests...\n";
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < N; i++)
-        ht.search(keys[i]);
+    {
+        if (ht.search(keys[i]))
+            foundAvg++;
+    }
     end = chrono::high_resolution_clock::now();
     double avgTime = chrono::duration<double>(end - start).count();
 
@@ -168,11 +176,13 @@ int main()
     cout << "Running Worst Case tests...\n";
     start = chrono::high_resolution_clock::now();
     for (int i = 0; i < N; i++)
-        ht.search(worstCaseKey);
+    {
+        if (ht.search(worstCaseKey))
+            foundWorst++;
+    }
     end = chrono::high_resolution_clock::now();
     double worstTime = chrono::duration<double>(end - start).count();
 
-    // --- OUTPUT ---
     string outFilename = "hash_table_search_dataset_" + datasetSize + ".txt";
     ofstream outFile(outFilename);
     outFile << "Best case time: " << bestTime << " seconds\n";
@@ -186,7 +196,10 @@ int main()
     cout << "Average case time: " << avgTime << " seconds\n";
     cout << "Worst case time: " << worstTime << " seconds\n";
     cout << "Output saved to: " << outFilename << "\n";
+    // We print the counts here so the compiler CANNOT delete the search loops
+    cout << "[Verification] Best found: " << foundBest << " | Avg found: " << foundAvg << " | Worst found: " << foundWorst << "\n";
     cout << "----------------------------------------\n";
+    cout << "Take a screenshot of this command prompt window!\n";
 
     return 0;
 }
