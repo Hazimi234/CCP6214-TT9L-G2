@@ -31,7 +31,7 @@ struct Record
     string str;
 };
 
-// Helper function to print the array to BOTH the screen and the file
+// Print the array to the screen and the file
 void printArray(const vector<Record> &arr, string label, ofstream &outFile)
 {
     cout << "[";
@@ -122,14 +122,14 @@ int main()
 
     // Setup output file
     string outFilename = inputFilename.substr(0, inputFilename.find(".csv")) +
-                         "_radix_sorted_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
+    "_radix_sorted_step_" + to_string(startRow) + "_" + to_string(endRow) + ".txt";
     ofstream outFile(outFilename);
 
     // Redirect standard output to both screen and file for convenience
     cout << "(processing from the rightmost character)\n";
     outFile << "(processing from the rightmost character)\n";
 
-    // Initial print (UPDATED)
+    // Print the original array before sorting
     printArray(arr, "original", outFile);
 
     // Process from rightmost digit (d=10) to leftmost digit (d=1)
@@ -137,7 +137,7 @@ int main()
     for (int d = 10; d >= 1; d--)
     {
         countingSort(arr, exp);
-        // Step print (UPDATED)
+        // Print the array after each digit processing
         printArray(arr, "$d=" + to_string(d) + "$", outFile);
         exp *= 10;
     }
