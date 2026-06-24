@@ -27,10 +27,10 @@ using namespace std;
 
 int main()
 {
-    // 1. Initialize Random Engine with your specific Student ID seed
+    // Using the leader's student ID as the seed so the random data generated is reproducible
     mt19937_64 rng(2421324461U);
 
-    // 2. Define ranges for the 10-digit integer and 5 lowercase letters
+    // Define the boundaries: 10-digit integer (1 billion to 9.99 billion) and lowercase letters
     uniform_int_distribution<long long> intDist(1000000000LL, 9999999999LL);
     uniform_int_distribution<int> charDist('a', 'z');
 
@@ -42,6 +42,7 @@ int main()
         return 1;
     }
 
+    // Dynamically name the output file based on the requested size
     string filename = "dataset_" + to_string(n) + ".csv";
     ofstream outFile(filename);
 
@@ -51,34 +52,35 @@ int main()
         return 1;
     }
 
+    // Use a bit array (vector<bool>) to track duplicate IDs.
     cout << "Allocating memory for uniqueness tracking" << endl;
     vector<bool> usedIDs(9000000000ULL, false);
 
     long long count = 0;
 
-    cout << "Generating " << n << " unique records. Please wait...\n";
+    cout << "Generating " << n << " unique records. Please wait\n";
     auto start_time = chrono::high_resolution_clock::now();
 
     while (count < n)
     {
         long long randomInt = intDist(rng);
 
-        // Map the 10-digit number (1 billion to 9.99 billion) to an index (0 to 8.99 billion)
+        // Convert the 10-digit ID into a zero-based index to fit inside the bit array
         long long index = randomInt - 1000000000LL;
 
-        // Check if the bit is false (meaning the integer is truly unique)
+        // Check if the bit at this index is false (meaning the ID has not been generated yet)
         if (!usedIDs[index])
         {
-            usedIDs[index] = true; // Flip the bit to true so we never use it again
+            usedIDs[index] = true; // Mark it as true so we don't accidentally use it again
 
-            // Generate the random 5-letter lowercase string
+            // Generate a random 5-letter lowercase string
             string randomStr = "";
             for (int i = 0; i < 5; ++i)
             {
                 randomStr += (char)charDist(rng);
             }
 
-            // Write to the CSV file formatted as "integer,string"
+            // Write the valid record to the CSV file
             outFile << randomInt << "," << randomStr << "\n";
             count++;
         }
