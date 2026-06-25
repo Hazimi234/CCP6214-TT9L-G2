@@ -29,7 +29,7 @@ struct Record {
     string str;
 };
 
-// Counting Sort subroutine (identical to the step version)
+// Counting Sort subroutine
 void countingSort(vector<Record>& arr, long long exp) {
     int n = arr.size();
     vector<Record> output(n);
@@ -61,7 +61,7 @@ int main() {
 
     string inputFilename = "dataset_" + datasetSize + ".csv";
     
-    // 1. I/O Read Phase (Not Timed)
+    // I/O Read (Not Timed)
     ifstream inFile(inputFilename);
     if (!inFile.is_open()) {
         cout << "Error: Could not open " << inputFilename << " - Ensure you generated it first!\n";
@@ -80,7 +80,7 @@ int main() {
     }
     inFile.close();
 
-    // 2. Sorting Phase (TIMED)
+    // Sorting (Timed)
     cout << "Starting Radix Sort...\n";
     auto start_time = chrono::high_resolution_clock::now();
 
@@ -93,7 +93,7 @@ int main() {
     auto end_time = chrono::high_resolution_clock::now();
     chrono::duration<double> duration = end_time - start_time;
 
-    // 3. I/O Write Phase (Not Timed)
+    // I/O Write (Not Timed)
     string outFilename = "radix_sorted_dataset_" + datasetSize + ".csv";
     ofstream outFile(outFilename);
     
