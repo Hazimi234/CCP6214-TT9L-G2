@@ -12,8 +12,8 @@
 // Task Distribution
 // Member_1: Heap Sort
 // Member_2: Radix Sort
-// Member_3: Dataset Generator
-// Member_4: Hash Table Search
+// Member_3: Hash Table Search
+// Member_4: Dataset Generator
 // *********************************************************
 
 #include <iostream>

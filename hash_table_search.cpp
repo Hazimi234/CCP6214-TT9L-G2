@@ -12,8 +12,8 @@
 // Task Distribution
 // Member_1: Heap Sort
 // Member_2: Radix Sort
-// Member_3: Dataset Generator
-// Member_4: Hash Table Search
+// Member_3: Hash Table Search
+// Member_4: Dataset Generator
 // *********************************************************
 
 #include <iostream>
@@ -105,7 +105,7 @@ public:
         }
 
         /* Generate a 12-digit key that hashes to the start of the largest cluster
-        since our datasets strictly contain 10-digit IDs, a 12-digit ID ensures
+        since the datasets strictly contain 10-digit IDs, a 12-digit ID ensures
         the item will definitely not be found, forcing a full cluster scan (O(N) behavior).*/
         long long multiplier = 100000000000LL / capacity + 1;
         long long fakeKey = bestStart + (multiplier * capacity);
