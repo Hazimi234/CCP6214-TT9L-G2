@@ -12,8 +12,8 @@
 // Task Distribution
 // Member_1: Heap Sort
 // Member_2: Radix Sort
-// Member_3: Dataset Generator
-// Member_4: Hash Table Search
+// Member_3: Hash Table Search
+// Member_4: Dataset Generator
 // *********************************************************
 
 #include <iostream>
@@ -24,7 +24,7 @@
 
 using namespace std;
 
-// Custom Node for our Array-Based Hash Table
+// Structure to represent a single slot in the hash table
 struct HashNode
 {
     long long id = -1;
@@ -32,7 +32,7 @@ struct HashNode
     bool isOccupied = false;
 };
 
-// Custom Hash Table Class using Linear Probing for Collisions
+// Array-based Hash Table using Linear Probing for collision resolution
 class HashTable
 {
 private:
@@ -40,7 +40,7 @@ private:
     int capacity;
 
 public:
-    // Initialize with double the dataset size to keep load factor around 0.5
+    // Initialize table size to double the dataset size to maintain a load factor of 0.5
     HashTable(int size)
     {
         capacity = size * 2;
@@ -52,17 +52,17 @@ public:
         delete[] table;
     }
 
-    // The "Magic Formula" - Modulo hashing
+    // Basic modulo hash function
     int hashFunction(long long key)
     {
         return key % capacity;
     }
 
-    // Insert using Linear Probing
+    // Insert function handling collisions via linear probing
     void insert(long long key, string value)
     {
         int index = hashFunction(key);
-        // If collision occurs, move to the next available slot
+        // Move to the next available slot if current index is occupied
         while (table[index].isOccupied)
         {
             index = (index + 1) % capacity;
@@ -72,7 +72,7 @@ public:
         table[index].isOccupied = true;
     }
 
-    // Search function that returns the formatted string for the step output
+    // Search function tailored to return the specific string format required for step tracking
     string searchTarget(long long key)
     {
         int index = hashFunction(key);
@@ -82,26 +82,26 @@ public:
         {
             if (table[index].id == key)
             {
-                // Target Found
+                // Target successfully found
                 return to_string(key) + " = " + to_string(key) + "/" + table[index].str;
             }
             index = (index + 1) % capacity;
             if (index == startIndex)
-                break; // We looped the whole table
+                break; // Terminate if the entire table has been traversed
         }
-        // Target Not Found
+        // Target does not exist in the table
         return "-1 != " + to_string(key);
     }
 };
 
 int main()
 {
-    // ---- TUTOR SPECIFIED VARIABLES ----
+    // Variables specified for step tracking output
     string inputFilename = "dataset_1000.csv";
-    // You will need to change 'foundTarget' to a real ID that exists in your specific dataset_1000.csv
+
+    // Testing targets (foundTarget must be updated to a real ID from the dataset)
     long long foundTarget = 7666333391LL;
     long long notFoundTarget = 123456789LL;
-    // -----------------------------------
 
     ifstream inFile(inputFilename);
     if (!inFile.is_open())
@@ -110,7 +110,7 @@ int main()
         return 1;
     }
 
-    // 1. Read dataset and count elements
+    // 1. Read dataset and populate the records vector
     vector<pair<long long, string>> records;
     string line;
     while (getline(inFile, line))
@@ -123,16 +123,16 @@ int main()
     }
     inFile.close();
 
-    // 2. Build the custom Hash Table
+    // 2. Build and populate the custom Hash Table
     HashTable ht(records.size());
     for (const auto &rec : records)
     {
         ht.insert(rec.first, rec.second);
     }
 
-    // 3. Perform Searches and Write Outputs
+    // 3. Execute searches and generate output files
 
-    // Process Found Target
+    // Process the existing target
     string outFound = "dataset_1000_hash_table_search_step_" + to_string(foundTarget) + ".txt";
     ofstream fileFound(outFound);
     string resultFound = ht.searchTarget(foundTarget);
@@ -140,7 +140,7 @@ int main()
     fileFound.close();
     cout << "Generated: " << outFound << " -> " << resultFound << "\n";
 
-    // Process Not Found Target
+    // Process the non-existent target
     string outNotFound = "dataset_1000_hash_table_search_step_" + to_string(notFoundTarget) + ".txt";
     ofstream fileNotFound(outNotFound);
     string resultNotFound = ht.searchTarget(notFoundTarget);

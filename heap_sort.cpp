@@ -12,8 +12,8 @@
 // Task Distribution
 // Member_1: Heap Sort
 // Member_2: Radix Sort
-// Member_3: Dataset Generator
-// Member_4: Hash Table Search
+// Member_3: Hash Table Search
+// Member_4: Dataset Generator
 // *********************************************************
 
 #include <iostream>
@@ -31,22 +31,28 @@ struct Record
     string str;
 };
 
-// Standard Max Heapify subroutine
+
+// To heapify a subtree rooted with node i, which is an index in arr[].
+// n is the size of the heap.
 void heapify(vector<Record> &arr, int n, int i)
 {
-    int largest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
+    int largest = i;       // Initialize largest as root
+    int left = 2 * i + 1;  // left child = 2*i + 1
+    int right = 2 * i + 2; // right child = 2*i + 2
 
+    // If left child is larger than root
     if (left < n && arr[left].id > arr[largest].id)
         largest = left;
 
+    // If right child is larger than largest so far
     if (right < n && arr[right].id > arr[largest].id)
         largest = right;
 
+    // If largest is not root
     if (largest != i)
     {
         swap(arr[i], arr[largest]);
+        // Recursively heapify the affected sub-tree
         heapify(arr, n, largest);
     }
 }
@@ -57,7 +63,7 @@ int main()
     cout << "Enter the dataset size you want to sort (e.g., 1000): ";
     cin >> datasetSize;
 
-    string inputFilename = "dataset_" + datasetSize + ".csv";
+    string inputFilename = "dataset_" + datasetSize + ".csv"; // Input file name based on user input
 
     // 1. I/O Read Phase (Not Timed)
     ifstream inFile(inputFilename);
@@ -67,36 +73,36 @@ int main()
         return 1;
     }
 
-    vector<Record> arr;
+    vector<Record> arr; // Vector to hold the records
     string line;
     cout << "Reading data into memory...\n";
     while (getline(inFile, line))
     {
-        stringstream ss(line);
+        stringstream ss(line); // Use stringstream to parse the line
         string idStr, textStr;
         getline(ss, idStr, ',');
         getline(ss, textStr, ',');
-        arr.push_back({stoll(idStr), textStr});
+        arr.push_back({stoll(idStr), textStr}); // Convert string to long long and store in vector
     }
     inFile.close();
 
-    int n = arr.size();
+    int n = arr.size(); // Get the size of the array
 
     // 2. Sorting Phase (TIMED)
     cout << "Starting Heap Sort...\n";
     auto start_time = chrono::high_resolution_clock::now();
 
     // Build Max Heap
-    for (int i = n / 2 - 1; i >= 0; i--)
+    for (int i = n / 2 - 1; i >= 0; i--) // Start from the last non-leaf node and heapify each node
     {
-        heapify(arr, n, i);
+        heapify(arr, n, i); // Call heapify on each node
     }
 
     // Extract elements from heap one by one
-    for (int i = n - 1; i > 0; i--)
+    for (int i = n - 1; i > 0; i--) // Move current root to end and reduce the heap size
     {
-        swap(arr[0], arr[i]);
-        heapify(arr, i, 0);
+        swap(arr[0], arr[i]); // Move current root to end
+        heapify(arr, i, 0);   // Call heapify on the reduced heap
     }
 
     auto end_time = chrono::high_resolution_clock::now();
