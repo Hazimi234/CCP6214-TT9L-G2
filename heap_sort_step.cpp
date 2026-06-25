@@ -98,11 +98,11 @@ int main()
     {
         if (currentRow >= startRow && currentRow <= endRow)
         {
-            stringstream ss(line);
+            stringstream ss(line); // Use stringstream to parse the line
             string idStr, textStr;
             getline(ss, idStr, ',');
             getline(ss, textStr, ',');
-            arr.push_back({stoll(idStr), textStr});
+            arr.push_back({stoll(idStr), textStr}); // Convert string to long long and store in vector
         }
         if (currentRow > endRow)
             break;
