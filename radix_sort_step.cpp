@@ -13,7 +13,7 @@
 // Member_1: Heap Sort
 // Member_2: Radix Sort
 // Member_3: Hash Table Search
-// Member_4: Dataset Generator
+// Member_4: Dataset Generatorf
 // *********************************************************
 
 #include <iostream>
@@ -87,9 +87,9 @@ void countingSort(vector<Record> &arr, long long exp)
 int main()
 {
     // ---- TUTOR SPECIFIED VARIABLES ----
-    string inputFilename = "dataset_1000.csv";
-    int startRow = 1;
-    int endRow = 7;
+    string inputFilename = "dataset_10.csv";
+    int startRow = 3;
+    int endRow = 8;
     // -----------------------------------
 
     ifstream inFile(inputFilename);
